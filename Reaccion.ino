@@ -12,7 +12,10 @@ Average<float> ave(10);
  int maxat = 0;
 
 int prueba=0;
-int retardo=5000;
+int retardo=3000;
+int cant_pruebas;
+String modo ="";
+int t_aleat=0;
 
 char orden="";
 
@@ -47,9 +50,31 @@ void loop() {
     if (pos_i>=0 & pos_f>=0) {
       String contenido=orden.substring(pos_i+1,pos_f);
       Serial.println(contenido);
-      if (contenido=="1")
+       int u=orden.indexOf("-");
+      if (u>0)
       {
-        reaccion();
+        modo=contenido.substring(0,u-1);
+        contenido=contenido.substring(u);
+         u=contenido.indexOf("-");
+         if (u>0)
+         { 
+         String x= contenido.substring(0,u);
+         cant_pruebas=x.toInt();
+         String x1=contenido.substring(u+1);
+         t_aleat=x1.toInt();
+         }
+         else 
+         {
+          String x= contenido.substring(0,u);
+         cant_pruebas=x.toInt();
+         t_aleat=0;
+         }
+                
+//        Serial.println(modo);
+//        Serial.println(cant_pruebas);
+//        Serial.println(t_aleat);
+                
+       reaccion(modo,cant_pruebas,t_aleat);
       }
      }
      
@@ -74,10 +99,13 @@ void cont_Tiempo(void)
   
 }
 
-void reaccion (){
-Serial.println("BEGIN");
-
- while(prueba<5)
+void reaccion (String modo,int cant_pruebas, int t_aleat){
+ if (modo=="1")
+ { 
+  tiempo=0;
+  Serial.println("BEGIN");
+  
+ while(prueba<cant_pruebas)
  {
   delay(1);
 if(var==true)
@@ -87,12 +115,14 @@ if(var==true)
   Serial.println(" ms");
   tiempo_prueba[prueba]=tiempo;
   ave.push(tiempo);
+  retardo=retardo+random(t_aleat)*1000;
+  //Serial.println(retardo);
   delay(retardo);
   var=false;
   //interrupts();
   prueba+=1;
    
-    if(prueba==5)
+    if(prueba==cant_pruebas)
    {
     
     Serial.print("Mean:   "); Serial.println(ave.mean());
@@ -111,8 +141,9 @@ if(var==true)
      tiempo=0;
    }
    }
-   
+ 
   }
 
   Serial.println("END");
+ }
 }
