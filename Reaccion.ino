@@ -1,7 +1,16 @@
+#include <Average.h>
+
 #include <TimerOne.h>
 
 bool var=false;
 volatile unsigned long tiempo = 0;
+int num=10;
+int tiempo_prueba [10];
+
+Average<float> ave(10);
+ int minat = 0;
+ int maxat = 0;
+
 int prueba=0;
 int retardo=5000;
 
@@ -13,12 +22,14 @@ void setup() {
 // FALLING to trigger on transition from dark to light
 // RISING  to trigger on transition from light to dark
 // CHANGE to trigger on either transition
- attachInterrupt(0, handleInterrupt, RISING); 
+ attachInterrupt(digitalPinToInterrupt(2), handleInterrupt, RISING); 
 
 Timer1.initialize(1000);
   Timer1.attachInterrupt(cont_Tiempo); // blinkLED to run every 1 miliseconds
  digitalWrite(7,HIGH);
  Serial.println("START");
+
+ 
  
 }
 
@@ -34,22 +45,32 @@ if(var==true)
   Serial.print("Prueba "+ (String)(prueba+1) +" : ");
   Serial.print(tiempo);
   Serial.println(" ms");
+  tiempo_prueba[prueba]=tiempo;
+  ave.push(tiempo);
   delay(retardo);
   var=false;
   //interrupts();
   prueba+=1;
-  digitalWrite(7,HIGH);
-  Serial.println("Begin");
-  tiempo=0;
-   } 
    
-   }
-   else if(prueba==5)
+    if(prueba==5)
    {
-    prueba=11;
-    Serial.println("FIN");
-    }
-  
+    
+    Serial.print("Mean:   "); Serial.println(ave.mean());
+    Serial.print("Mode:   "); Serial.println(ave.mode());
+    Serial.print("Max:    "); Serial.println(ave.maximum(&maxat));
+    Serial.print(" at:    "); Serial.println(maxat+1);
+    Serial.print("Min:    "); Serial.println(ave.minimum(&minat));
+    Serial.print(" at:    "); Serial.println(minat+1);
+    Serial.print("StdDev: "); Serial.println(ave.stddev());
+   }
+   else 
+   {
+     digitalWrite(7,HIGH);
+     Serial.println("Begin");
+     tiempo=0;
+   }
+  }
+ }  
 }
 
 void handleInterrupt() {
