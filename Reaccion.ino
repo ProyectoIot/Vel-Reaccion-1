@@ -14,6 +14,8 @@ Average<float> ave(10);
 int prueba=0;
 int retardo=5000;
 
+char orden="";
+
 void setup() {
   // put your setup code here, to run once:
  Serial.begin(9600);
@@ -30,16 +32,54 @@ Timer1.initialize(1000);
  Serial.println("START");
 
  
- 
 }
 
 
 
 void loop() {
   // put your main code here, to run repeatedly:
+ if (Serial.available()) {
 
-if (prueba<5)
+     String orden = Serial.readStringUntil('\n');
+     Serial.println(orden);
+     int pos_i=orden.indexOf("<");
+     int pos_f=orden.indexOf(">");
+    if (pos_i>=0 & pos_f>=0) {
+      String contenido=orden.substring(pos_i+1,pos_f);
+      Serial.println(contenido);
+      if (contenido=="1")
+      {
+        reaccion();
+      }
+     }
+     
+  }
+  
+     
+  }
+
+
+
+void handleInterrupt() {
+  var=true;
+  digitalWrite(7,LOW);
+  
+  
+  
+}
+
+void cont_Tiempo(void)
 {
+  tiempo=tiempo+1;
+  
+}
+
+void reaccion (){
+Serial.println("BEGIN");
+
+ while(prueba<5)
+ {
+  delay(1);
 if(var==true)
 {
   Serial.print("Prueba "+ (String)(prueba+1) +" : ");
@@ -62,6 +102,7 @@ if(var==true)
     Serial.print("Min:    "); Serial.println(ave.minimum(&minat));
     Serial.print(" at:    "); Serial.println(minat+1);
     Serial.print("StdDev: "); Serial.println(ave.stddev());
+   
    }
    else 
    {
@@ -69,20 +110,9 @@ if(var==true)
      Serial.println("Begin");
      tiempo=0;
    }
+   }
+   
   }
- }  
-}
 
-void handleInterrupt() {
-  var=true;
-  digitalWrite(7,LOW);
-  
-  
-  
-}
-
-void cont_Tiempo(void)
-{
-  tiempo=tiempo+1;
-  
+  Serial.println("END");
 }
