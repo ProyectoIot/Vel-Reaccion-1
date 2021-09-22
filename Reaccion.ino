@@ -95,6 +95,8 @@ void cont_Tiempo(void)
 }
 
 void reaccion (String modo,int cant_pruebas, int t_aleat){
+
+  Serial.println("START");
  if (modo=="1")
  { 
   tiempo=0;
