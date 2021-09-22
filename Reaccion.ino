@@ -44,12 +44,12 @@ void loop() {
  if (Serial.available()) {
 
      String orden = Serial.readStringUntil('\n');
-     Serial.println(orden);
+     //Serial.println(orden);
      int pos_i=orden.indexOf("<");
      int pos_f=orden.indexOf(">");
     if (pos_i>=0 & pos_f>=0) {
       String contenido=orden.substring(pos_i+1,pos_f);
-      Serial.println(contenido);
+      //Serial.println(contenido);
        int u=orden.indexOf("-");
       if (u>0)
       {
@@ -77,20 +77,15 @@ void loop() {
        reaccion(modo,cant_pruebas,t_aleat);
       }
      }
-     
-  }
-  
-     
+   }
   }
 
 
 
 void handleInterrupt() {
   var=true;
-  digitalWrite(7,LOW);
-  
-  
-  
+  digitalWrite(7,LOW); // apaga el sensor
+    
 }
 
 void cont_Tiempo(void)
@@ -103,18 +98,20 @@ void reaccion (String modo,int cant_pruebas, int t_aleat){
  if (modo=="1")
  { 
   tiempo=0;
-  Serial.println("BEGIN");
+  Serial.println("LED");
   
  while(prueba<cant_pruebas)
  {
   delay(1);
 if(var==true)
 {
-  Serial.print("Prueba "+ (String)(prueba+1) +" : ");
-  Serial.print(tiempo);
-  Serial.println(" ms");
+  Serial.print("PRUEBA"+ (String)(prueba+1) +":");
+  Serial.println(tiempo);
+  //Serial.println(" ms");
   tiempo_prueba[prueba]=tiempo;
   ave.push(tiempo);
+  int d=analogRead(A5);
+  randomSeed(d);
   retardo=retardo+random(t_aleat)*1000;
   //Serial.println(retardo);
   delay(retardo);
@@ -125,19 +122,21 @@ if(var==true)
     if(prueba==cant_pruebas)
    {
     
-    Serial.print("Mean:   "); Serial.println(ave.mean());
-    Serial.print("Mode:   "); Serial.println(ave.mode());
-    Serial.print("Max:    "); Serial.println(ave.maximum(&maxat));
-    Serial.print(" at:    "); Serial.println(maxat+1);
-    Serial.print("Min:    "); Serial.println(ave.minimum(&minat));
-    Serial.print(" at:    "); Serial.println(minat+1);
-    Serial.print("StdDev: "); Serial.println(ave.stddev());
+    Serial.print("Mean:"); Serial.println(ave.mean());
+    Serial.print("Mode:"); Serial.println(ave.mode());
+    Serial.print("Max:"); Serial.println(ave.maximum(&maxat));
+    Serial.print("pos_max:"); Serial.println(maxat+1);
+    Serial.print("Min:"); Serial.println(ave.minimum(&minat));
+    Serial.print("pos_min:"); Serial.println(minat+1);
+    Serial.print("StdDev:"); Serial.println(ave.stddev());
+
    
+    
    }
    else 
    {
      digitalWrite(7,HIGH);
-     Serial.println("Begin");
+     Serial.println("LED");
      tiempo=0;
    }
    }
@@ -145,5 +144,6 @@ if(var==true)
   }
 
   Serial.println("END");
+   prueba=0;
  }
 }
