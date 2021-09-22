@@ -7,7 +7,7 @@ volatile unsigned long tiempo = 0;
 int num=10;
 int tiempo_prueba [10];
 
-Average<float> ave(10);
+//Average<float> ave(10);
  int minat = 0;
  int maxat = 0;
 
@@ -97,6 +97,8 @@ void cont_Tiempo(void)
 void reaccion (String modo,int cant_pruebas, int t_aleat){
 
   Serial.println("START");
+  Average<float> ave(cant_pruebas);
+  
  if (modo=="1")
  { 
   tiempo=0;
